@@ -1,0 +1,24 @@
+Current clinical research suggests that marijuana (specifically the psychoactive compound THC) exacerbates clinical psychosis primarily by hijacking the brain's dopamine system and disrupting neural connectivity in areas responsible for reality processing.
+While most people can use cannabis without developing psychosis, for individuals with a pre-existing clinical condition (such as schizophrenia or bipolar disorder) or a genetic predisposition, the drug can trigger or worsen symptoms through the following biological mechanisms.
+Disclaimer: I am an AI, not a doctor. The following is for informational purposes only and does not constitute medical advice.
+1. The Dopamine Surge (The "Engine" of Psychosis)
+The most widely accepted explanation is the Dopamine Hypothesis.
+ * Normal Function: Dopamine is a chemical messenger involved in motivation, reward, and how we attach "salience" (importance) to external stimuli.
+ * The Disruption: THC induces a surge of dopamine in a specific part of the brain called the striatum. In a clinically psychotic brain, the striatum is already hyperactive.
+ * The Result: When THC floods this area with even more dopamine, the brain begins to assign extreme importance to irrelevant things. A random noise becomes a message; a stranger’s glance becomes a threat. This "aberrant salience" is the biological fuel for paranoia and delusions.
+2. Disruption of the Endocannabinoid System
+The brain has its own natural cannabis-like system (the endocannabinoid system) which acts like a "traffic controller" for other neurotransmitters, dampening excessive firing to keep brain signals orderly.
+ * The Mechanism: THC binds to CB1 receptors in the brain much more strongly and for longer than the brain’s natural chemicals (anandamide) do.
+ * The Result: This overloads the traffic controller. Signals that should be dampened (noise) are allowed through, leading to disorganized thinking and sensory overload—hallmarks of a psychotic episode.
+3. Accelerated Synaptic Pruning (Structural Changes)
+This mechanism is particularly relevant for younger users (teens and young adults) whose brains are still developing.
+ * The Process: During young adulthood, the brain undergoes "pruning," where it cuts away unused neural connections to become more efficient.
+ * The Exacerbation: Heavy THC exposure appears to accelerate this thinning, particularly in the prefrontal cortex (the area responsible for logic and impulse control). Excessive thinning in this area is a structural characteristic often observed in the brains of patients with schizophrenia.
+4. Genetic Vulnerability (COMT and AKT1 Genes)
+Research has identified specific genes that make certain individuals biologically unable to process the effects of cannabis safely.
+ * COMT Gene: This gene regulates the enzyme that clears dopamine from the brain. Individuals with the "Val/Val" variant of this gene clear dopamine too quickly in some areas and too slowly in others. When they use cannabis, their dopamine levels become critically unbalanced, significantly increasing the risk of psychosis compared to those without this genetic variant.
+ * AKT1 Gene: This gene affects dopamine signaling. Variations here can make the brain hypersensitive to the psychotomimetic (psychosis-mimicking) effects of THC.
+5. Medication Interference
+A practical, non-neurological way marijuana exacerbates psychosis is by interfering with treatment.
+ * The Mechanism: Smoking cannabis induces liver enzymes (specifically CYP1A2) that metabolize medications faster.
+ * The Result: This can cause antipsychotic medications to be cleared from the blood too quickly, effectively lowering the dose the patient receives and leading to a relapse of symptoms, even if they are taking their medication as prescribed.
