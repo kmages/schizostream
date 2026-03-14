@@ -81,8 +81,13 @@ shared/           # Shared code between client/server
 - **Uppy**: Client-side file upload handling with presigned URLs
 
 ### Required Environment Variables
-- `DATABASE_URL`: PostgreSQL connection string
+- `CLOUD_DATABASE_URL`: Google Cloud SQL PostgreSQL connection string (HIPAA-compliant, takes priority over DATABASE_URL)
+- `DATABASE_URL`: Replit built-in PostgreSQL (fallback only — not HIPAA-compliant)
 - `SESSION_SECRET`: Session encryption key
 - `OPENAI_API_KEY`: OpenAI API access
 - `REPL_ID`: Replit environment identifier (auto-set)
 - `ISSUER_URL`: OpenID Connect issuer (defaults to Replit)
+
+### Database
+- **Primary**: Google Cloud SQL PostgreSQL 18 at `34.71.89.49` (HIPAA-compliant via Google Cloud Data Processing Addendum)
+- **Embeddings**: OpenAI `text-embedding-3-small` (switched from Gemini text-embedding-004 which was unavailable on v1beta API)

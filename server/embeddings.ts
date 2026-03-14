@@ -1,16 +1,19 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
 import { storage } from "./storage";
 import type { KnowledgeEntry } from "@shared/schema";
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "");
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function generateEmbedding(text: string): Promise<number[]> {
-  const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
-  const result = await model.embedContent(text);
-  return result.embedding.values;
+  const result = await openai.embeddings.create({
+    model: "text-embedding-3-small",
+    input: text,
+  });
+  return result.data[0].embedding;
 }
 
 export function cosineSimilarity(a: number[], b: number[]): number {
+  if (a.length !== b.length) return 0;
   let dotProduct = 0;
   let normA = 0;
   let normB = 0;
@@ -19,7 +22,8 @@ export function cosineSimilarity(a: number[], b: number[]): number {
     normA += a[i] * a[i];
     normB += b[i] * b[i];
   }
-  return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+  const denom = Math.sqrt(normA) * Math.sqrt(normB);
+  return denom === 0 ? 0 : dotProduct / denom;
 }
 
 export function createEmbeddingText(entry: { title: string; content: string; keywords: string[]; expert: string; category: string }): string {
@@ -44,7 +48,7 @@ export async function semanticSearch(query: string, entries: KnowledgeEntry[], l
   return results.map(r => r.entry);
 }
 
-export async function semanticSearchWithScores(query: string, entries: KnowledgeEntry[], limit: number = 3): Promise<SemanticSearchResult[]> {
+export async function semanticSearchWithScores(query: string, entries: KnowledgeEntry[], limit: number = 5): Promise<SemanticSearchResult[]> {
   const queryEmbedding = await generateEmbedding(query);
   
   const scored = entries
@@ -58,7 +62,18 @@ export async function semanticSearchWithScores(query: string, entries: Knowledge
   return scored
     .sort((a, b) => b.similarity - a.similarity)
     .slice(0, limit)
-    .filter(s => s.similarity > 0.3);
+    .filter(s => s.similarity > 0.15);
+}
+
+export async function clearAllEmbeddings(): Promise<void> {
+  const entries = await storage.getKnowledgeEntries();
+  console.log(`Clearing ${entries.length} old embeddings to force regeneration with new model...`);
+  for (const entry of entries) {
+    if (entry.embedding) {
+      await storage.updateKnowledgeEntry(entry.id, { embedding: null } as any);
+    }
+  }
+  console.log("All embeddings cleared.");
 }
 
 export async function ensureAllEmbeddings(): Promise<void> {
@@ -67,7 +82,7 @@ export async function ensureAllEmbeddings(): Promise<void> {
   
   if (withoutEmbeddings.length === 0) return;
   
-  console.log(`Generating embeddings for ${withoutEmbeddings.length} entries...`);
+  console.log(`Generating embeddings for ${withoutEmbeddings.length} entries with OpenAI text-embedding-3-small...`);
   
   for (const entry of withoutEmbeddings) {
     try {

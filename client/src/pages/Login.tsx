@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, ShieldCheck, HeartPulse, Scale, Sparkles, BookOpen, Users, Star, Share, X, Plus, AlertTriangle, ChevronDown, ChevronUp, Bot } from "lucide-react";
+import { ArrowRight, ShieldCheck, HeartPulse, Scale, Sparkles, BookOpen, Users, Star, Share, X, Plus, AlertTriangle, ChevronDown, ChevronUp, Bot, Pill } from "lucide-react";
 import { useState, useEffect } from "react";
 import logoImage from "@assets/generated_images/abstract_compass_wave_logo.png";
 
@@ -151,10 +151,8 @@ export default function Login() {
     <div className="min-h-screen bg-slate-900 text-white overflow-x-hidden">
       <PWAInstallBanner />
       {/* Hero Section */}
-      <div className="relative">
+      <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-teal-900/40 to-slate-900 z-0" />
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl z-0" />
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl z-0" />
         
         <div className="relative z-10 max-w-6xl mx-auto px-6 py-16 md:py-24">
           <div className="flex items-center gap-3 mb-8">
@@ -186,6 +184,35 @@ export default function Login() {
                         With proper medication adherence - especially <strong>Clozapine</strong> for treatment-resistant cases - 
                         many individuals with schizophrenia and schizoaffective disorder return to independent, fulfilling lives. 
                         The data is clear: early, aggressive, evidence-based treatment works.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-r from-amber-700/80 to-amber-800/80 border border-amber-500/30 mb-6 shadow-2xl shadow-amber-900/20">
+                <CardContent className="p-6">
+                  <div className="flex gap-4">
+                    <div className="shrink-0">
+                      <Pill className="w-8 h-8 text-amber-200" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="text-lg font-bold text-white" data-testid="text-clozapine-rems-title">REMS Has Been Lifted — Demand Clozapine</h3>
+                      </div>
+                      <p className="text-white/90 text-sm leading-relaxed mb-3">
+                        The FDA's burdensome <strong>REMS (Risk Evaluation and Mitigation Strategy)</strong> restrictions 
+                        on Clozapine have been removed. For years, these requirements discouraged doctors from prescribing 
+                        the only FDA-approved treatment for treatment-resistant schizophrenia. That barrier is now gone.
+                      </p>
+                      <p className="text-white/90 text-sm leading-relaxed mb-3">
+                        Many psychiatrists are still unaware or hesitant. <strong className="text-amber-200">You may need to educate 
+                        your own doctor.</strong> Bring the data. Clozapine reduces hospitalization by 85% and suicide 
+                        risk by 90%. If your loved one has failed two or more antipsychotics, Clozapine is the 
+                        evidence-based next step — and now there is no regulatory excuse to delay it.
+                      </p>
+                      <p className="text-amber-200/90 text-xs font-semibold italic">
+                        Be your loved one's advocate. Insist on the gold standard.
                       </p>
                     </div>
                   </div>
@@ -277,8 +304,9 @@ export default function Login() {
                 Studies show it reduces hospitalization by 85%, suicide attempts by 90%, and significantly improves quality of life.
               </p>
               <p className="text-slate-300 leading-relaxed">
-                Yet it remains drastically underutilized. Our Navigator includes information to help families and providers 
-                understand when and how to pursue this life-saving treatment.
+                Yet it remains drastically underutilized. With <strong className="text-teal-300">REMS restrictions now lifted</strong>, 
+                there are fewer barriers than ever. Our Navigator includes information to help families educate their providers 
+                and advocate for this life-saving treatment.
               </p>
             </div>
           </div>

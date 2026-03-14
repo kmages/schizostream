@@ -71,25 +71,30 @@ let embeddingsGenerated = false;
 
 const SYSTEM_PROMPT = `You are a compassionate mental health crisis support assistant for families navigating serious mental illness, particularly schizophrenia and schizoaffective disorder.
 
-INFORMATION SOURCES:
-1. PRIMARY: The EXPERT KNOWLEDGE BASE content provided below - always prioritize and cite this when relevant
-2. SUPPLEMENTARY: Your general knowledge - use this for topics not covered in the knowledge base
+CRITICAL RULE — KNOWLEDGE BASE FIRST:
+You MUST answer primarily from the EXPERT KNOWLEDGE BASE content provided below. This is your primary and most trusted source of information.
+
+- If the knowledge base contains relevant content, use it as your main answer. Quote, paraphrase, and cite the expert and source directly.
+- Only supplement with your general knowledge when the knowledge base does not cover the specific topic at all.
+- Do NOT default to general AI knowledge when the knowledge base has relevant content — even if only partially relevant.
+- Never answer from general knowledge on topics the knowledge base covers (e.g., Clozapine, anosognosia, schizophrenia treatment, crisis navigation, HIPAA, legal advocacy, family support).
+- Always cite the expert by name when using knowledge base content: "According to [Expert Name]..." or "From our [Source] knowledge base..."
+
+INFORMATION SOURCES (in strict priority order):
+1. EXPERT KNOWLEDGE BASE (provided below) — always use this first; it contains curated expert clinical knowledge
+2. General knowledge — only for gaps the knowledge base does not address (e.g., recommending a specific book or TED talk not in the database)
 
 GUIDELINES:
-- When knowledge base content is relevant, cite the expert name and source
-- When the knowledge base doesn't cover a specific request (like TED talks, specific books, videos), you MAY provide recommendations from your general knowledge
-- Be clear about the source: "From our expert knowledge base..." vs "From general resources..."
+- Be clear about the source: "From our expert knowledge base (Dr. Laitman)..." vs "From general resources..."
 - Never claim a knowledge base expert said something unless it's actually in the provided content
 - Prioritize hope-centered, recovery-focused information
+- Be warm, supportive, and practical. Acknowledge the family's pain while providing concrete next steps.
 
 Your role is to:
 - Provide hope and reassurance that recovery IS possible with proper treatment
-- Share expert knowledge base content when available, supplemented by general knowledge when needed
 - Help families understand their options and navigate the healthcare system
-- Offer practical guidance on topics like HIPAA, insurance advocacy, and crisis communication
-- Never replace professional medical advice - always encourage working with healthcare providers
-
-Be warm, supportive, and practical. Acknowledge the family's pain while providing concrete next steps.`;
+- Offer practical guidance on topics like HIPAA, insurance advocacy, Clozapine, and crisis communication
+- Never replace professional medical advice - always encourage working with healthcare providers`;
 
 export interface ChatResponse {
   response: string;
@@ -274,7 +279,7 @@ When recommending resources:
 - Focus on hope-centered, recovery-oriented content
 - Prioritize evidence-based information about treatments like Clozapine when relevant`;
 
-const CONFIDENCE_THRESHOLD = 0.35;
+const CONFIDENCE_THRESHOLD = 0.20;
 
 export async function getChatResponse(
   userMessage: string, 
@@ -318,20 +323,39 @@ export async function getChatResponse(
     
     // For file attachments, search using original user message if available, otherwise use a generic query
     const searchQuery = userMessage || (fileContent ? 'document analysis medical records' : '');
-    const searchResults = await semanticSearchWithScores(searchQuery, allEntries, 3);
-    console.log(`Search results for "${searchQuery.substring(0, 50)}...": ${searchResults.length} results`);
+    
+    // Try semantic search first
+    let searchResults = await semanticSearchWithScores(searchQuery, allEntries, 5);
+    console.log(`Semantic search results for "${searchQuery.substring(0, 50)}...": ${searchResults.length} results`);
     
     if (searchResults.length > 0) {
       highestSimilarity = searchResults[0].similarity;
-      // Only include entries that are above the confidence threshold
       const relevantResults = searchResults.filter(r => r.similarity >= CONFIDENCE_THRESHOLD);
       relevantKnowledge = relevantResults.map(r => r.entry);
       console.log(`Top matches: ${searchResults.map(r => `${r.entry.title}: ${r.similarity.toFixed(3)}`).join(', ')}`);
       console.log(`Entries above threshold: ${relevantResults.length}`);
     }
     
-    usedExpertKnowledge = highestSimilarity >= CONFIDENCE_THRESHOLD;
-    console.log(`Decision: similarity ${highestSimilarity.toFixed(3)} vs threshold ${CONFIDENCE_THRESHOLD} => ${usedExpertKnowledge ? 'KB' : 'Web'}`);
+    // Keyword fallback: if semantic search returned nothing useful, do simple keyword matching
+    if (relevantKnowledge.length === 0 && searchQuery.trim().length > 0) {
+      console.log('Semantic search failed or returned no useful results — falling back to keyword search');
+      const queryWords = searchQuery.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+      const keywordMatches = allEntries
+        .filter(entry => {
+          const haystack = `${entry.title} ${entry.content} ${Array.isArray(entry.keywords) ? entry.keywords.join(' ') : entry.keywords} ${entry.category} ${entry.expert}`.toLowerCase();
+          return queryWords.some(word => haystack.includes(word));
+        })
+        .slice(0, 5);
+      
+      if (keywordMatches.length > 0) {
+        console.log(`Keyword fallback found ${keywordMatches.length} entries: ${keywordMatches.map(e => e.title).join(', ')}`);
+        relevantKnowledge = keywordMatches;
+        highestSimilarity = CONFIDENCE_THRESHOLD; // treat as qualifying
+      }
+    }
+    
+    usedExpertKnowledge = relevantKnowledge.length > 0;
+    console.log(`Decision: ${usedExpertKnowledge ? 'KB' : 'General AI'} (semantic similarity: ${highestSimilarity.toFixed(3)}, KB entries: ${relevantKnowledge.length})`);
   } catch (err) {
     console.error('Knowledge search error (continuing without):', err);
   }
