@@ -127,9 +127,9 @@ export async function registerRoutes(
   // For now, let's protect everything under /api except auth
   // Note: registerAuthRoutes handles /api/auth/*
   
-  // Helper to extract user ID from req.user
-  const getUserId = (req: any) => req.user?.claims?.sub;
-  const getUserName = (req: any) => `${req.user?.claims?.first_name || ''} ${req.user?.claims?.last_name || ''}`.trim() || req.user?.claims?.email || 'Unknown';
+  // Helper to extract user ID from req.user (Google OAuth uses req.user.id)
+  const getUserId = (req: any) => req.user?.id ?? req.user?.claims?.sub;
+  const getUserName = (req: any) => req.user?.email ?? req.user?.claims?.email ?? 'Unknown';
 
   // Seed data on first authenticated request (hacky but effective for per-user seeding without a "signup" hook)
   app.use('/api', async (req, res, next) => {

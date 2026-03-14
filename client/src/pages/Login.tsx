@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, ShieldCheck, HeartPulse, Scale, Sparkles, BookOpen, Users, Star, Share, X, Plus, AlertTriangle, ChevronDown, ChevronUp, Bot, Pill } from "lucide-react";
+import { SiGoogle } from "react-icons/si";
 import { useState, useEffect } from "react";
 import logoImage from "@assets/generated_images/abstract_compass_wave_logo.png";
 
@@ -237,8 +238,8 @@ export default function Login() {
                   and care coordination data - even if someone else uses your device.
                 </p>
                 <div className="flex items-center justify-center gap-2 bg-white text-slate-900 rounded-lg py-3 px-6 font-semibold group-hover:bg-slate-100 transition-colors">
-                  Enter HIPAA Turnkey Crisis Toolkit
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  <SiGoogle className="w-5 h-5 text-[#4285F4]" />
+                  Sign in with Google
                 </div>
               </button>
             </div>
