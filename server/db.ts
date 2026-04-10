@@ -14,6 +14,15 @@ if (!connectionString) {
 
 export const pool = new Pool({ 
   connectionString,
-  ssl: process.env.CLOUD_DATABASE_URL ? { rejectUnauthorized: false } : false
+  ssl: process.env.CLOUD_DATABASE_URL ? { rejectUnauthorized: false } : false,
+  max: 10,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
 });
+
+// Prevent pool errors from crashing the process
+pool.on("error", (err) => {
+  console.error("Database pool error (non-fatal):", err.message);
+});
+
 export const db = drizzle(pool, { schema });

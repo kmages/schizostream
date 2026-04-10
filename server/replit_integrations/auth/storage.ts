@@ -16,18 +16,34 @@ class AuthStorage implements IAuthStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(userData)
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
-          ...userData,
-          updatedAt: new Date(),
-        },
-      })
-      .returning();
-    return user;
+    try {
+      // Try normal upsert by primary key (id)
+      const [user] = await db
+        .insert(users)
+        .values(userData)
+        .onConflictDoUpdate({
+          target: users.id,
+          set: {
+            ...userData,
+            updatedAt: new Date(),
+          },
+        })
+        .returning();
+      return user;
+    } catch (err: any) {
+      // If email unique constraint fires (e.g. migrating from Replit Auth where
+      // the same email existed under a different ID), update the existing row
+      // to adopt the new Google ID and profile data.
+      if (err.code === "23505" && err.constraint?.includes("email")) {
+        const [user] = await db
+          .update(users)
+          .set({ ...userData, updatedAt: new Date() })
+          .where(eq(users.email, userData.email!))
+          .returning();
+        return user;
+      }
+      throw err;
+    }
   }
 }
 

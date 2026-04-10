@@ -3,6 +3,14 @@ import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
+// Prevent crashes from unhandled errors
+process.on("uncaughtException", (err) => {
+  console.error("[uncaughtException]", err.message, err.stack || "");
+});
+process.on("unhandledRejection", (reason) => {
+  console.error("[unhandledRejection]", reason);
+});
+
 const app = express();
 const httpServer = createServer(app);
 
@@ -65,9 +73,8 @@ app.use((req, res, next) => {
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
-
+    console.error(`[error] ${status} - ${message}`, err.stack || "");
     res.status(status).json({ message });
-    throw err;
   });
 
   // importantly only setup vite in development and after
